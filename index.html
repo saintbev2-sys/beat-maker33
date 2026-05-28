@@ -333,7 +333,7 @@
       Load a stem (vocal, instrumental, loop). It gets sliced into 16 chops — one per step. Tap each chop to preview, then assign them all to a pad to create an MPC-style chop sequence.
     </div>
     <label class="sb-chop-zone" id="chopZone">
-      <input type="file" accept="audio/*" style="display:none" onchange="SB.loadChop(this.files[0])">
+      <input type="file" accept="audio/*,.m4a,.mp3,.wav,.aac,.ogg,.flac,.aiff,.mp4" style="display:none" onchange="SB.loadChop(this.files[0])">
       <div style="font-size:30px;margin-bottom:8px">✂️</div>
       <div style="color:var(--cyan);font-size:11px;letter-spacing:3px;font-weight:700" id="chopLabel">TAP TO LOAD STEM FOR CHOPPING</div>
       <div style="color:#444;font-size:9px;margin-top:4px">MP3, WAV, M4A — auto-sliced into 16 chops</div>
@@ -384,7 +384,7 @@
       Upload your track. We'll detect the BPM and lock the beat to your flow.
     </div>
     <label class="sb-upload-zone">
-      <input type="file" accept="audio/*" style="display:none" onchange="SB.detectBpm(this.files[0])">
+      <input type="file" accept="audio/*,.m4a,.mp3,.wav,.aac,.ogg,.flac,.aiff,.mp4" style="display:none" onchange="SB.detectBpm(this.files[0])">
       <div class="sb-upload-zone-icon">🎵</div>
       <div class="sb-upload-zone-label" id="trackName">TAP TO UPLOAD YOUR TRACK</div>
       <div class="sb-upload-zone-sub">MP3, WAV, M4A supported</div>
@@ -560,7 +560,7 @@ const SB = (() => {
             onclick="document.getElementById('fi_${p.id}').click()">
             ${hasC?'✂ CHOPPED':hasS?'✓ LOADED':'📁 LOAD'}
           </button>
-          <input type="file" id="fi_${p.id}" accept="audio/*" style="display:none"
+          <input type="file" id="fi_${p.id}" accept="audio/*,.m4a,.mp3,.wav,.aac,.ogg,.flac,.aiff,.mp4" style="display:none"
             onchange="SB.loadSample('${p.id}',this.files[0])">
         </div>`;
       for(let s=0;s<STEPS;s++){
