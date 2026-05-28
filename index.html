@@ -1,423 +1,768 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SAINT BEV – Free Sample Beat Maker</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #080808; font-family: 'Share Tech Mono', monospace; }
-        @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Share+Tech+Mono&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>SAINT BEV – Beat Maker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* All styles (same as before but I'll inline them for brevity) */
-        .sb-root { min-height: 100vh; background: #080808; color: #f0f0f0; }
-        .sb-header { padding: 24px 20px 0; border-bottom: 2px solid #FF2D2D; background: #0d0d0d; }
-        .sb-logo-row { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-        .sb-logo-box { width: 52px; height: 52px; background: #FF2D2D; display: flex; align-items: center; justify-content: center; font-size: 26px; clip-path: polygon(0 0, 90% 0, 100% 10%, 100% 100%, 10% 100%, 0 90%); }
-        .sb-title { font-family: 'Black Han Sans', sans-serif; font-size: 28px; letter-spacing: 4px; color: #fff; text-shadow: 3px 3px 0 #FF2D2D; }
-        .sb-subtitle { font-size: 9px; letter-spacing: 5px; color: #FF2D2D; }
-        .sb-tabs { display: flex; gap: 0; margin-top: 4px; }
-        .sb-tab { background: transparent; color: #444; border: none; border-top: 2px solid transparent; padding: 10px 20px; font-size: 10px; font-family: monospace; font-weight: 700; letter-spacing: 3px; cursor: pointer; text-transform: uppercase; }
-        .sb-tab.active { color: #FF2D2D; border-top: 2px solid #FF2D2D; background: rgba(255,45,45,0.08); }
-        .sb-body { padding: 20px 16px; }
-        .sb-transport { display: flex; align-items: center; gap: 12px; padding: 14px; background: #0d0d0d; border-left: 3px solid #FF2D2D; margin-bottom: 16px; }
-        .sb-play-btn { width: 56px; height: 56px; background: #FF2D2D; border: none; clip-path: polygon(0 0, 88% 0, 100% 12%, 100% 100%, 12% 100%, 0 88%); font-size: 22px; cursor: pointer; }
-        .sb-play-btn.playing { background: #FF8C00; }
-        .sb-bpm-value { font-family: 'Black Han Sans', sans-serif; font-size: 26px; color: #FFD700; }
-        .sb-tap-btn { background: #111; border: 1px solid #333; color: #FFD700; padding: 10px 14px; cursor: pointer; }
-        .sb-vol-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
-        .sb-seq-grid { display: grid; grid-template-columns: 70px repeat(16, 1fr); gap: 2px; margin-bottom: 6px; }
-        .sb-pad-label-container { display: flex; flex-direction: column; gap: 2px; }
-        .sb-pad-label { background: #1a1a1a; border: 1px solid; font-size: 7px; font-weight: 900; padding: 4px 0; text-align: center; cursor: pointer; clip-path: polygon(0 0, 85% 0, 100% 15%, 100% 100%, 15% 100%, 0 85%); }
-        .sb-load-sample-btn { background: #1a1a1a; border: 1px solid #333; font-size: 6px; padding: 3px 0; cursor: pointer; text-align: center; }
-        .sb-step-btn { height: 30px; border: none; cursor: pointer; }
-        .sb-step-btn.on::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.15); }
-        .sb-actions { display: flex; gap: 8px; margin-top: 16px; }
-        .sb-action-btn { flex: 1; background: #0d0d0d; border: 1px solid #222; padding: 12px 0; font-size: 10px; cursor: pointer; text-transform: uppercase; }
-        .sb-running { margin-top: 14px; background: #0d0d0d; border-left: 3px solid #00FF87; padding: 10px; color: #00FF87; }
-        input[type=range] { width: 100%; }
-        .sb-yt-hint, .sb-stem-box { background: #0d0d0d; padding: 12px; margin-bottom: 16px; border-left: 3px solid; }
-        .sb-stem-link { display: block; color: #00FF87; margin-bottom: 6px; }
-    </style>
+  :root {
+    --red:    #FF2D2D;
+    --orange: #FF8C00;
+    --gold:   #FFD700;
+    --green:  #00FF87;
+    --cyan:   #00CFFF;
+    --purple: #CC00FF;
+    --bg:     #080808;
+    --bg2:    #0d0d0d;
+    --bg3:    #111111;
+    --border: #1e1e1e;
+    --text:   #f0f0f0;
+    --dim:    #444;
+  }
+
+  html, body {
+    background: var(--bg) !important;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ── HEADER ── */
+  #sb-header {
+    background: var(--bg2);
+    border-bottom: 2px solid var(--red);
+    padding: 18px 16px 0;
+  }
+  .sb-logo-row {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .sb-logo-box {
+    width: 48px; height: 48px;
+    background: var(--red);
+    clip-path: polygon(0 0,88% 0,100% 12%,100% 100%,12% 100%,0 88%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .sb-title {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 26px; letter-spacing: 4px;
+    color: #fff; text-shadow: 2px 2px 0 var(--red);
+    line-height: 1;
+  }
+  .sb-subtitle {
+    font-size: 8px; letter-spacing: 4px;
+    color: var(--red); margin-top: 3px;
+  }
+  .sb-tabs { display: flex; }
+  .sb-tab {
+    background: transparent; color: var(--dim);
+    border: none; border-top: 2px solid transparent;
+    padding: 10px 14px; font-size: 9px;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: 700; letter-spacing: 2px;
+    cursor: pointer; text-transform: uppercase;
+    transition: all .2s;
+  }
+  .sb-tab.active {
+    color: var(--red); border-top-color: var(--red);
+    background: rgba(255,45,45,.08);
+  }
+
+  /* ── BODY ── */
+  #sb-body { padding: 16px; background: var(--bg); }
+
+  /* ── TRANSPORT ── */
+  .sb-transport {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bg2); border-left: 3px solid var(--red);
+    padding: 12px 14px; margin-bottom: 12px;
+  }
+  .sb-play-btn {
+    width: 54px; height: 54px; flex-shrink: 0;
+    background: var(--red); border: none; color: #fff;
+    font-size: 20px; cursor: pointer;
+    clip-path: polygon(0 0,88% 0,100% 12%,100% 100%,12% 100%,0 88%);
+    transition: background .15s;
+  }
+  .sb-play-btn.playing { background: var(--orange); }
+  .sb-bpm-label { font-size: 8px; letter-spacing: 3px; color: var(--dim); }
+  .sb-bpm-value {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 24px; color: var(--gold); line-height: 1;
+  }
+  .sb-tap-btn {
+    background: var(--bg3); border: 1px solid #333;
+    color: var(--gold); padding: 10px 12px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; letter-spacing: 2px;
+    cursor: pointer; white-space: nowrap;
+  }
+  .sb-tap-btn:active { background: #2a2a00; }
+
+  /* ── VOL ROW ── */
+  .sb-vol-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px; padding: 0 2px;
+  }
+  .sb-vol-label { font-size: 9px; letter-spacing: 3px; color: var(--dim); flex-shrink: 0; }
+  .sb-vol-val { font-size: 11px; color: var(--purple); width: 24px; text-align: right; }
+
+  /* ── SEQUENCER ── */
+  .sb-seq-row {
+    display: grid;
+    grid-template-columns: 70px repeat(16, 1fr);
+    gap: 2px; margin-bottom: 4px;
+  }
+  .sb-step-num {
+    font-size: 7px; text-align: center;
+    padding: 2px 0; color: var(--dim);
+  }
+  .sb-step-num.beat { color: var(--gold); font-weight: 900; }
+  .sb-step-num.active-col { color: #fff; }
+
+  .sb-pad-cell {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .sb-pad-label {
+    font-size: 7px; font-weight: 900;
+    padding: 5px 0; text-align: center; cursor: pointer;
+    border: 1px solid; border-radius: 2px;
+    clip-path: polygon(0 0,85% 0,100% 15%,100% 100%,15% 100%,0 85%);
+    transition: opacity .08s;
+    background: transparent;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+  }
+  .sb-pad-label.flash { opacity: .4; }
+  .sb-load-btn {
+    font-size: 6px; padding: 3px 0; cursor: pointer;
+    text-align: center; border: 1px solid #2a2a2a;
+    background: var(--bg3); color: #555;
+    font-family: 'Share Tech Mono', monospace;
+    white-space: nowrap; overflow: hidden;
+    transition: background .15s, color .15s;
+  }
+  .sb-load-btn.loaded { color: var(--green); border-color: #1a3a2a; }
+
+  .sb-step {
+    height: 28px; border: none; cursor: pointer;
+    background: #111; border-radius: 2px;
+    transition: background .06s, box-shadow .06s;
+    position: relative;
+  }
+  .sb-step.on { }
+  .sb-step.current { outline: 1px solid rgba(255,255,255,.4); }
+
+  /* ── ACTIONS ── */
+  .sb-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .sb-action-btn {
+    flex: 1; background: var(--bg2);
+    border: 1px solid #222; padding: 11px 0;
+    font-size: 9px; cursor: pointer; text-transform: uppercase;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 2px; transition: background .15s;
+  }
+  .sb-action-btn:hover { background: #1a1a1a; }
+
+  /* ── RUNNING MSG ── */
+  .sb-running {
+    margin-top: 12px; background: #001a0a;
+    border-left: 3px solid var(--green);
+    padding: 10px 14px; color: var(--green);
+    font-size: 10px; letter-spacing: 2px;
+    display: none;
+  }
+
+  /* ── TABS CONTENT ── */
+  .sb-tab-panel { display: none; }
+  .sb-tab-panel.active { display: block; }
+
+  .sb-hint-box {
+    padding: 12px; margin-bottom: 16px;
+    border-left: 3px solid; background: var(--bg2);
+    font-size: 11px; line-height: 1.7; color: #888;
+  }
+  .sb-input {
+    flex: 1; background: var(--bg3); border: 1px solid #333;
+    color: var(--text); padding: 10px 12px;
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    outline: none;
+  }
+  .sb-load-yt-btn {
+    background: var(--red); border: none; color: #fff;
+    padding: 10px 16px; font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; cursor: pointer;
+  }
+
+  /* Upload dropzone */
+  .sb-upload-zone {
+    border: 2px dashed var(--purple);
+    background: var(--bg2); padding: 28px 16px;
+    text-align: center; cursor: pointer;
+    margin-bottom: 14px;
+    transition: background .2s;
+  }
+  .sb-upload-zone:hover { background: #140a1e; }
+  .sb-upload-zone-icon { font-size: 32px; margin-bottom: 8px; }
+  .sb-upload-zone-label {
+    color: var(--purple); font-size: 12px;
+    letter-spacing: 3px; font-weight: 700;
+  }
+  .sb-upload-zone-sub { color: #444; font-size: 10px; margin-top: 4px; }
+
+  .sb-detected-box {
+    background: var(--bg2); border-left: 3px solid var(--purple);
+    padding: 16px; margin-top: 14px; display: none;
+  }
+  .sb-detected-label { font-size: 9px; letter-spacing: 3px; color: #666; margin-bottom: 4px; }
+  .sb-detected-bpm {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 48px; color: var(--purple); line-height: 1;
+  }
+  .sb-detected-confirm { color: var(--green); font-size: 11px; margin-top: 6px; }
+
+  /* Chop section */
+  .sb-chop-zone {
+    border: 2px dashed var(--cyan);
+    background: var(--bg2); padding: 22px 16px;
+    text-align: center; cursor: pointer; margin-bottom: 14px;
+  }
+  .sb-chop-zone:hover { background: #001a22; }
+  .sb-chop-result {
+    background: var(--bg2); border-left: 3px solid var(--cyan);
+    padding: 14px; display: none;
+  }
+  .sb-chop-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 6px; margin-top: 10px;
+  }
+  .sb-chop-pad {
+    background: #001a22; border: 1px solid var(--cyan);
+    padding: 8px 4px; text-align: center; cursor: pointer;
+    font-size: 9px; color: var(--cyan); letter-spacing: 1px;
+    transition: background .1s;
+  }
+  .sb-chop-pad:active { background: #003a44; }
+  .sb-chop-assign-row {
+    display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap;
+  }
+  .sb-chop-assign-label { font-size: 9px; color: #666; letter-spacing: 2px; }
+  .sb-chop-select {
+    background: var(--bg3); border: 1px solid #333;
+    color: var(--text); padding: 6px 10px;
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+  }
+  .sb-chop-assign-btn {
+    background: var(--cyan); border: none; color: #000;
+    padding: 7px 14px; font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; font-weight: 900; letter-spacing: 2px; cursor: pointer;
+  }
+
+  /* Stems tab */
+  .sb-stem-box {
+    background: var(--bg2); border-left: 3px solid var(--green);
+    padding: 14px; margin-bottom: 12px;
+  }
+  .sb-stem-link {
+    display: block; color: var(--green);
+    font-size: 11px; margin-bottom: 8px;
+    text-decoration: none;
+  }
+  .sb-stem-link:hover { text-decoration: underline; }
+
+  /* Sliders */
+  input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 3px;
+    background: #2a2a2a; outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 14px; height: 14px;
+    background: var(--gold); border-radius: 50%;
+  }
+  input[type=range]#volSlider::-webkit-slider-thumb { background: var(--purple); }
+</style>
 </head>
 <body>
-<div id="root"></div>
+<div id="sb-header">
+  <div class="sb-logo-row">
+    <div class="sb-logo-box">🎤</div>
+    <div>
+      <div class="sb-title">SAINT BEV</div>
+      <div class="sb-subtitle">Sample Beat Maker — Load Your Stems</div>
+    </div>
+  </div>
+  <div class="sb-tabs" id="tabBar"></div>
+</div>
+<div id="sb-body">
+  <!-- BEAT TAB -->
+  <div class="sb-tab-panel active" id="panel-beat">
+    <div class="sb-transport">
+      <button class="sb-play-btn" id="playBtn" onclick="SB.startStop()">▶</button>
+      <div style="flex:1">
+        <div class="sb-bpm-label">TEMPO</div>
+        <div class="sb-bpm-value"><span id="bpmValue">90</span> BPM</div>
+        <input type="range" id="bpmSlider" min="60" max="180" value="90"
+               oninput="SB.setBpm(+this.value)">
+      </div>
+      <button class="sb-tap-btn" onclick="SB.tap()">TAP</button>
+    </div>
+    <div class="sb-vol-row">
+      <span class="sb-vol-label">VOL</span>
+      <input type="range" id="volSlider" min="0" max="100" value="80"
+             oninput="SB.setVol(+this.value)" style="flex:1">
+      <span class="sb-vol-val" id="volValue">80</span>
+    </div>
+    <div id="seqContainer"></div>
+    <div class="sb-actions">
+      <button class="sb-action-btn" style="color:var(--cyan)" onclick="SB.randomize()">🎲 RANDOMIZE</button>
+      <button class="sb-action-btn" style="color:var(--orange)" onclick="SB.reset()">↺ RESET</button>
+    </div>
+    <div class="sb-running" id="runningMsg">● REC — SPIT YOUR BARS NOW</div>
+  </div>
+
+  <!-- CHOP TAB -->
+  <div class="sb-tab-panel" id="panel-chop">
+    <div class="sb-hint-box" style="border-color:var(--cyan)">
+      Load a stem (vocal, instrumental, loop). It gets sliced into 16 chops — one per step. Tap each chop to preview, then assign them all to a pad to create an MPC-style chop sequence.
+    </div>
+    <label class="sb-chop-zone" id="chopZone">
+      <input type="file" accept="audio/*" style="display:none" onchange="SB.loadChop(this.files[0])">
+      <div style="font-size:30px;margin-bottom:8px">✂️</div>
+      <div style="color:var(--cyan);font-size:11px;letter-spacing:3px;font-weight:700" id="chopLabel">TAP TO LOAD STEM FOR CHOPPING</div>
+      <div style="color:#444;font-size:9px;margin-top:4px">MP3, WAV, M4A — auto-sliced into 16 chops</div>
+    </label>
+    <div class="sb-chop-result" id="chopResult">
+      <div style="color:var(--cyan);font-size:9px;letter-spacing:3px;margin-bottom:6px">16 CHOPS — TAP TO PREVIEW</div>
+      <div class="sb-chop-grid" id="chopGrid"></div>
+      <div class="sb-chop-assign-row">
+        <span class="sb-chop-assign-label">ASSIGN TO PAD:</span>
+        <select class="sb-chop-select" id="chopPadSelect">
+          <option value="kick">KICK</option>
+          <option value="snare">SNARE</option>
+          <option value="hihat">HI-HAT</option>
+          <option value="clap">CLAP</option>
+          <option value="perc">PERC</option>
+          <option value="bass">808</option>
+        </select>
+        <button class="sb-chop-assign-btn" onclick="SB.assignChops()">LOAD ALL CHOPS → PAD</button>
+      </div>
+      <div style="color:#555;font-size:9px;margin-top:8px;line-height:1.6">
+        Each of the 16 chops will be assigned to the 16 steps of the chosen pad.<br>
+        Hit PLAY on the BEAT tab to hear them fire in sequence.
+      </div>
+    </div>
+  </div>
+
+  <!-- YOUTUBE TAB -->
+  <div class="sb-tab-panel" id="panel-youtube">
+    <div class="sb-hint-box" style="border-color:var(--orange)">
+      Paste a YouTube beat or song. Play it alongside your sequencer for reference or to rap over.
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <input class="sb-input" id="ytUrl" placeholder="https://youtube.com/watch?v=...">
+      <button class="sb-load-yt-btn" onclick="SB.loadYt()">LOAD</button>
+    </div>
+    <iframe id="ytFrame" width="100%" height="220"
+      style="display:none;border:1px solid #222;background:#000"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+    <div id="ytPlaceholder" style="background:#0d0d0d;border:1px dashed #222;height:140px;display:flex;align-items:center;justify-content:center;color:#333;font-size:12px">
+      ▶ paste a link above
+    </div>
+  </div>
+
+  <!-- MY TRACK TAB -->
+  <div class="sb-tab-panel" id="panel-mytrack">
+    <div class="sb-hint-box" style="border-color:var(--purple)">
+      Upload your track. We'll detect the BPM and lock the beat to your flow.
+    </div>
+    <label class="sb-upload-zone">
+      <input type="file" accept="audio/*" style="display:none" onchange="SB.detectBpm(this.files[0])">
+      <div class="sb-upload-zone-icon">🎵</div>
+      <div class="sb-upload-zone-label" id="trackName">TAP TO UPLOAD YOUR TRACK</div>
+      <div class="sb-upload-zone-sub">MP3, WAV, M4A supported</div>
+    </label>
+    <div id="detectingMsg" style="display:none;background:#0d0d0d;padding:16px;text-align:center;color:var(--purple);letter-spacing:3px;font-size:11px">
+      ⏳ READING YOUR FLOW...
+    </div>
+    <div class="sb-detected-box" id="detectedBox">
+      <div class="sb-detected-label">DETECTED TEMPO</div>
+      <div class="sb-detected-bpm"><span id="detectedBpmVal">—</span></div>
+      <div style="color:#666;font-size:9px;margin-top:2px">BPM</div>
+      <div class="sb-detected-confirm">✓ BEAT LOCKED TO YOUR TEMPO</div>
+      <div style="color:#555;font-size:9px;margin-top:8px">→ Switch to BEAT tab and hit PLAY</div>
+    </div>
+  </div>
+
+  <!-- STEMS TAB -->
+  <div class="sb-tab-panel" id="panel-stems">
+    <div class="sb-hint-box" style="border-color:var(--green)">
+      Split any song into vocal + instrumental stems for free. Then load them into pads or use the CHOP tab.
+    </div>
+    <div class="sb-stem-box">
+      <div style="color:#888;font-size:9px;letter-spacing:3px;margin-bottom:10px">FREE STEM SPLITTERS</div>
+      <a class="sb-stem-link" href="https://vocalremover.org" target="_blank">🎤 VOCALREMOVER.ORG — 100% free, no account</a>
+      <a class="sb-stem-link" href="https://moises.ai" target="_blank">🎛 MOISES.AI — 5 free/month</a>
+      <a class="sb-stem-link" href="https://lalal.ai" target="_blank">🔬 LALAL.AI — free preview, pay to download</a>
+      <div style="margin-top:10px;color:#444;font-size:9px;line-height:1.7">
+        👉 Best flow: vocalremover.org → download instrumental → come back → CHOP tab → slice it → assign to pad → PLAY
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-    // Vanilla JavaScript implementation – no React, no build step, 100% reliable.
-    // This is a complete rewrite using plain JS + DOM to avoid any Babel/CDN issues.
-    (function(){
-        const STEPS = 16;
-        const DEFAULT_BPM = 90;
-        const PADS = [
-            { id: "kick",  label: "KICK",   color: "#FF2D2D", defaultType: "kick" },
-            { id: "snare", label: "SNARE",  color: "#FF8C00", defaultType: "snare" },
-            { id: "hihat", label: "HI-HAT", color: "#FFD700", defaultType: "hihat" },
-            { id: "clap",  label: "CLAP",   color: "#00FF87", defaultType: "clap" },
-            { id: "perc",  label: "PERC",   color: "#00CFFF", defaultType: "perc" },
-            { id: "bass",  label: "808",    color: "#CC00FF", defaultType: "bass" },
-        ];
-        const DEFAULT_PATTERN = {
-            kick:  [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
-            snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
-            hihat: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1],
-            clap:  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            perc:  [0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0],
-            bass:  [1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0],
-        };
+const SB = (() => {
+  const STEPS = 16;
+  const PADS = [
+    { id:"kick",  label:"KICK",   color:"#FF2D2D" },
+    { id:"snare", label:"SNARE",  color:"#FF8C00" },
+    { id:"hihat", label:"HI-HAT", color:"#FFD700" },
+    { id:"clap",  label:"CLAP",   color:"#00FF87" },
+    { id:"perc",  label:"PERC",   color:"#00CFFF" },
+    { id:"bass",  label:"808",    color:"#CC00FF" },
+  ];
+  const DEFAULT_PATTERN = {
+    kick:  [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
+    snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+    hihat: [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1],
+    clap:  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    perc:  [0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0],
+    bass:  [1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0],
+  };
+  const TABS = [
+    { id:"beat",    label:"▶ BEAT" },
+    { id:"chop",    label:"✂ CHOP" },
+    { id:"youtube", label:"YT SAMPLE" },
+    { id:"mytrack", label:"MY TRACK" },
+    { id:"stems",   label:"STEMS" },
+  ];
 
-        let audioCtx = null;
-        let intervalId = null;
-        let currentStepIndex = 0;
-        let playing = false;
-        let bpm = DEFAULT_BPM;
-        let volume = 80;
-        let pattern = JSON.parse(JSON.stringify(DEFAULT_PATTERN));
-        let sampleBuffers = { kick: null, snare: null, hihat: null, clap: null, perc: null, bass: null };
-        let activeTab = "beat";
-        let ytEmbedId = "";
-        let uploadedFileName = "";
-        let detectedBpm = null;
-        let bpmDetecting = false;
+  let audioCtx = null;
+  let playing = false, intervalId = null, step = 0;
+  let bpm = 90, vol = 80;
+  let pattern = JSON.parse(JSON.stringify(DEFAULT_PATTERN));
+  let sampleBuffers = {};        // padId -> AudioBuffer (single sample)
+  let chopBuffers = [];          // array of 16 AudioBuffers from chop
+  let chopStepBuffers = {};      // padId -> [16 AudioBuffers] for chop-assigned pads
+  let tapTimes = [];
+  let currentTab = "beat";
 
-        // Helper: get or create AudioContext
-        function getAudioCtx() {
-            if (!audioCtx || audioCtx.state === "closed") {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === "suspended") audioCtx.resume();
-            return audioCtx;
+  // ── Audio ─────────────────────────────────────────────────────
+  function ctx() {
+    if (!audioCtx || audioCtx.state === "closed")
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+  }
+
+  function playSynth(id) {
+    const c = ctx(), now = c.currentTime;
+    const g = c.createGain(); g.gain.value = vol/100; g.connect(c.destination);
+    if (id==="kick") {
+      const o=c.createOscillator(); o.connect(g);
+      o.frequency.setValueAtTime(120,now);
+      o.frequency.exponentialRampToValueAtTime(40,now+.15);
+      g.gain.setValueAtTime(1,now); g.gain.exponentialRampToValueAtTime(.001,now+.4);
+      o.start(); o.stop(now+.4);
+    } else if (id==="snare") {
+      const o=c.createOscillator(); o.connect(g);
+      o.frequency.value=200;
+      g.gain.setValueAtTime(.8,now); g.gain.exponentialRampToValueAtTime(.001,now+.2);
+      o.start(); o.stop(now+.2);
+    } else if (id==="hihat") {
+      const sz=c.sampleRate*.05, buf=c.createBuffer(1,sz,c.sampleRate);
+      const d=buf.getChannelData(0); for(let i=0;i<sz;i++) d[i]=Math.random()*2-1;
+      const s=c.createBufferSource(); s.buffer=buf; s.connect(g);
+      g.gain.setValueAtTime(.5,now); g.gain.exponentialRampToValueAtTime(.001,now+.05);
+      s.start();
+    } else if (id==="clap") {
+      for(let i=0;i<3;i++){
+        const sz=c.sampleRate*.02, buf=c.createBuffer(1,sz,c.sampleRate);
+        const d=buf.getChannelData(0); for(let j=0;j<sz;j++) d[j]=Math.random()*2-1;
+        const s=c.createBufferSource(); s.buffer=buf;
+        const gi=c.createGain(); s.connect(gi); gi.connect(c.destination);
+        gi.gain.setValueAtTime(.5*(vol/100),now+i*.01);
+        gi.gain.exponentialRampToValueAtTime(.001,now+i*.01+.03);
+        s.start(now+i*.01);
+      }
+      return;
+    } else {
+      const o=c.createOscillator(); o.type="triangle"; o.connect(g);
+      o.frequency.setValueAtTime(440,now);
+      g.gain.setValueAtTime(.5,now); g.gain.exponentialRampToValueAtTime(.001,now+.1);
+      o.start(); o.stop(now+.1);
+    }
+  }
+
+  function playBuffer(buf) {
+    if (!buf) return;
+    const c=ctx();
+    const s=c.createBufferSource(); s.buffer=buf;
+    const g=c.createGain(); g.gain.value=vol/100;
+    s.connect(g); g.connect(c.destination); s.start();
+  }
+
+  function firePad(id, stepIdx) {
+    // Check if this pad has per-step chop buffers
+    if (chopStepBuffers[id] && chopStepBuffers[id][stepIdx]) {
+      playBuffer(chopStepBuffers[id][stepIdx]);
+    } else if (sampleBuffers[id]) {
+      playBuffer(sampleBuffers[id]);
+    } else {
+      playSynth(id);
+    }
+    // Flash label
+    const el = document.querySelector(`.sb-pad-label[data-id="${id}"]`);
+    if (el) { el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),80); }
+  }
+
+  function fireStep(s) {
+    PADS.forEach(p => { if(pattern[p.id][s]) firePad(p.id, s); });
+    renderStepHighlight(s);
+  }
+
+  function renderStepHighlight(s) {
+    document.querySelectorAll(".sb-step-num").forEach((el,i) => {
+      el.classList.remove("active-col");
+      if(i===s) el.classList.add("active-col");
+    });
+    document.querySelectorAll(".sb-step").forEach(el => {
+      el.classList.remove("current");
+      if(+el.dataset.step===s) el.classList.add("current");
+    });
+  }
+
+  // ── Sequencer ─────────────────────────────────────────────────
+  function buildSeq() {
+    const c = document.getElementById("seqContainer"); if(!c) return;
+    // Number row
+    let html = `<div class="sb-seq-row" style="margin-bottom:4px"><div></div>`;
+    for(let i=0;i<STEPS;i++) html+=`<div class="sb-step-num${i%4===0?' beat':''}">${i+1}</div>`;
+    html += "</div>";
+    // Pad rows
+    PADS.forEach(p=>{
+      const hasS = sampleBuffers[p.id];
+      const hasC = chopStepBuffers[p.id];
+      html += `<div class="sb-seq-row">
+        <div class="sb-pad-cell">
+          <button class="sb-pad-label" data-id="${p.id}"
+            style="border-color:${p.color};color:${p.color}"
+            onclick="SB.clearPad('${p.id}')">${p.label}</button>
+          <button class="sb-load-btn ${hasS||hasC?'loaded':''}"
+            onclick="document.getElementById('fi_${p.id}').click()">
+            ${hasC?'✂ CHOPPED':hasS?'✓ LOADED':'📁 LOAD'}
+          </button>
+          <input type="file" id="fi_${p.id}" accept="audio/*" style="display:none"
+            onchange="SB.loadSample('${p.id}',this.files[0])">
+        </div>`;
+      for(let s=0;s<STEPS;s++){
+        const on=pattern[p.id][s];
+        html+=`<button class="sb-step${on?' on':''}" data-step="${s}"
+          style="${on?`background:${p.color};box-shadow:0 0 6px ${p.color}44`:''}"
+          onclick="SB.toggle('${p.id}',${s})"></button>`;
+      }
+      html+="</div>";
+    });
+    c.innerHTML = html;
+  }
+
+  // ── Controls ──────────────────────────────────────────────────
+  function startStop() {
+    if(playing){
+      clearInterval(intervalId); playing=false; step=0;
+      document.getElementById("playBtn").classList.remove("playing");
+      document.getElementById("playBtn").innerHTML="▶";
+      document.getElementById("runningMsg").style.display="none";
+      renderStepHighlight(-1);
+    } else {
+      ctx(); playing=true; step=0;
+      fireStep(0);
+      intervalId=setInterval(()=>{ step=(step+1)%STEPS; fireStep(step); }, 60000/bpm/4);
+      document.getElementById("playBtn").classList.add("playing");
+      document.getElementById("playBtn").innerHTML="⏹";
+      document.getElementById("runningMsg").style.display="block";
+    }
+  }
+
+  function setBpm(v) {
+    bpm=v;
+    document.getElementById("bpmValue").innerText=bpm;
+    document.getElementById("bpmSlider").value=bpm;
+    if(playing){ clearInterval(intervalId); intervalId=setInterval(()=>{ step=(step+1)%STEPS; fireStep(step); },60000/bpm/4); }
+  }
+
+  function setVol(v) {
+    vol=v;
+    document.getElementById("volValue").innerText=v;
+  }
+
+  function tap() {
+    const now=Date.now();
+    tapTimes.push(now);
+    tapTimes=tapTimes.filter(t=>now-t<3000).slice(-8);
+    if(tapTimes.length>=2){
+      const diffs=tapTimes.slice(1).map((t,i)=>t-tapTimes[i]);
+      const avg=diffs.reduce((a,b)=>a+b,0)/diffs.length;
+      setBpm(Math.round(Math.min(180,Math.max(60,60000/avg))));
+    }
+  }
+
+  function toggle(id,s) { pattern[id][s]=pattern[id][s]?0:1; buildSeq(); }
+  function clearPad(id) { pattern[id]=Array(STEPS).fill(0); buildSeq(); }
+  function randomize() {
+    PADS.forEach(p=>{ pattern[p.id]=Array(STEPS).fill(0).map(()=>Math.random()>.75?1:0); });
+    pattern.kick[0]=1;pattern.kick[8]=1;pattern.snare[4]=1;pattern.snare[12]=1;
+    buildSeq();
+  }
+  function reset() { pattern=JSON.parse(JSON.stringify(DEFAULT_PATTERN)); buildSeq(); }
+
+  // ── Sample load ───────────────────────────────────────────────
+  async function loadSample(id,file) {
+    if(!file) return;
+    try {
+      const ab=await file.arrayBuffer();
+      const buf=await ctx().decodeAudioData(ab);
+      sampleBuffers[id]=buf;
+      delete chopStepBuffers[id];
+      buildSeq();
+    } catch(e){ alert("Failed to load audio"); }
+  }
+
+  // ── BPM Detection (real algorithm) ────────────────────────────
+  async function detectBpm(file) {
+    if(!file) return;
+    document.getElementById("trackName").innerText=file.name;
+    document.getElementById("detectingMsg").style.display="block";
+    document.getElementById("detectedBox").style.display="none";
+    try {
+      const ab=await file.arrayBuffer();
+      const offCtx=new OfflineAudioContext(1,44100*30,44100);
+      const buf=await new AudioContext().decodeAudioData(ab.slice(0));
+      // Use first 30s for analysis
+      const data=buf.getChannelData(0);
+      const sr=buf.sampleRate;
+      const wSize=Math.floor(sr*0.01);
+      const energies=[];
+      for(let i=0;i<Math.min(data.length-wSize,sr*30);i+=wSize){
+        let e=0; for(let j=0;j<wSize;j++) e+=data[i+j]**2;
+        energies.push(e/wSize);
+      }
+      const mean=energies.reduce((a,b)=>a+b,0)/energies.length;
+      const thresh=mean*1.5;
+      const peaks=[]; let lastPeak=-50;
+      for(let i=1;i<energies.length-1;i++){
+        if(energies[i]>thresh && energies[i]>energies[i-1] && energies[i]>energies[i+1] && i-lastPeak>20){
+          peaks.push(i); lastPeak=i;
         }
+      }
+      let detected=90;
+      if(peaks.length>=2){
+        const intervals=[];
+        for(let i=1;i<Math.min(peaks.length,40);i++)
+          intervals.push((peaks[i]-peaks[i-1])*wSize/sr);
+        const avg=intervals.reduce((a,b)=>a+b,0)/intervals.length;
+        let raw=Math.round(60/avg);
+        // Normalize to 60-180 range
+        while(raw>180) raw=Math.round(raw/2);
+        while(raw<60)  raw=Math.round(raw*2);
+        detected=Math.min(180,Math.max(60,raw));
+      }
+      setBpm(detected);
+      document.getElementById("detectedBpmVal").innerText=detected;
+      document.getElementById("detectedBox").style.display="block";
+    } catch(e){ console.error(e); }
+    document.getElementById("detectingMsg").style.display="none";
+  }
 
-        // Synth fallback sounds (simplified but works)
-        function playSynth(padId, vol) {
-            const ctx = getAudioCtx();
-            const now = ctx.currentTime;
-            const gainNode = ctx.createGain();
-            gainNode.gain.value = vol;
-            gainNode.connect(ctx.destination);
-            if (padId === "kick") {
-                const osc = ctx.createOscillator();
-                osc.connect(gainNode);
-                osc.frequency.setValueAtTime(120, now);
-                osc.frequency.exponentialRampToValueAtTime(40, now+0.15);
-                gainNode.gain.setValueAtTime(1, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, now+0.4);
-                osc.start(); osc.stop(now+0.4);
-            } else if (padId === "snare") {
-                const osc = ctx.createOscillator();
-                osc.connect(gainNode);
-                osc.frequency.value = 200;
-                gainNode.gain.setValueAtTime(0.8, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, now+0.2);
-                osc.start(); osc.stop(now+0.2);
-            } else if (padId === "hihat") {
-                const bufferSize = ctx.sampleRate * 0.05;
-                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i=0; i<bufferSize; i++) data[i] = Math.random()*2-1;
-                const source = ctx.createBufferSource();
-                source.buffer = buffer;
-                source.connect(gainNode);
-                gainNode.gain.setValueAtTime(0.5, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, now+0.05);
-                source.start();
-            } else {
-                // simple beep for others
-                const osc = ctx.createOscillator();
-                osc.type = "sine";
-                osc.frequency.value = 440;
-                osc.connect(gainNode);
-                gainNode.gain.setValueAtTime(0.5, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, now+0.1);
-                osc.start(); osc.stop(now+0.1);
-            }
+  // ── Sample Chopping ───────────────────────────────────────────
+  async function loadChop(file) {
+    if(!file) return;
+    document.getElementById("chopLabel").innerText=file.name;
+    try {
+      const ab=await file.arrayBuffer();
+      const buf=await ctx().decodeAudioData(ab);
+      // Slice into 16 equal chunks
+      const chopLen=Math.floor(buf.length/STEPS);
+      chopBuffers=[];
+      for(let i=0;i<STEPS;i++){
+        const c=ctx().createBuffer(buf.numberOfChannels,chopLen,buf.sampleRate);
+        for(let ch=0;ch<buf.numberOfChannels;ch++){
+          const src=buf.getChannelData(ch).slice(i*chopLen,(i+1)*chopLen);
+          c.getChannelData(ch).set(src);
         }
+        chopBuffers.push(c);
+      }
+      renderChopGrid();
+      document.getElementById("chopResult").style.display="block";
+    } catch(e){ alert("Failed to load audio for chopping"); }
+  }
 
-        function playPad(padId) {
-            const vol = volume / 100;
-            const buffer = sampleBuffers[padId];
-            const ctx = getAudioCtx();
-            if (buffer) {
-                const source = ctx.createBufferSource();
-                source.buffer = buffer;
-                const gain = ctx.createGain();
-                gain.gain.value = vol;
-                source.connect(gain);
-                gain.connect(ctx.destination);
-                source.start();
-            } else {
-                playSynth(padId, vol);
-            }
-            // visual flash
-            const padLabel = document.querySelector(`.sb-pad-label[data-id="${padId}"]`);
-            if (padLabel) {
-                padLabel.style.opacity = "0.5";
-                setTimeout(() => { if(padLabel) padLabel.style.opacity = "1"; }, 80);
-            }
-        }
+  function renderChopGrid() {
+    const g=document.getElementById("chopGrid"); if(!g) return;
+    g.innerHTML=chopBuffers.map((_,i)=>
+      `<button class="sb-chop-pad" onclick="SB.previewChop(${i})">CHOP ${i+1}</button>`
+    ).join("");
+  }
 
-        function fireStep(step) {
-            for (let pad of PADS) {
-                if (pattern[pad.id][step] === 1) {
-                    playPad(pad.id);
-                }
-            }
-            // highlight current step
-            document.querySelectorAll('.sb-step-num').forEach((el, idx) => {
-                if (idx === step) el.style.color = "#FFD700";
-                else if (idx % 4 === 0) el.style.color = "#FFD700";
-                else el.style.color = "#333";
-            });
-        }
+  function previewChop(i) { if(chopBuffers[i]) playBuffer(chopBuffers[i]); }
 
-        function startStop() {
-            if (playing) {
-                if (intervalId) clearInterval(intervalId);
-                playing = false;
-                document.getElementById('playBtn').classList.remove('playing');
-                document.getElementById('playBtn').innerText = '▶';
-            } else {
-                getAudioCtx();
-                playing = true;
-                currentStepIndex = 0;
-                fireStep(0);
-                intervalId = setInterval(() => {
-                    currentStepIndex = (currentStepIndex + 1) % STEPS;
-                    fireStep(currentStepIndex);
-                }, (60000 / bpm) / 4);
-                document.getElementById('playBtn').classList.add('playing');
-                document.getElementById('playBtn').innerText = '⏹';
-            }
-        }
+  function assignChops() {
+    const id=document.getElementById("chopPadSelect").value;
+    if(chopBuffers.length<STEPS){ alert("Load a stem first"); return; }
+    chopStepBuffers[id]=chopBuffers.slice(0,STEPS);
+    delete sampleBuffers[id];
+    // Activate all 16 steps on this pad
+    pattern[id]=Array(STEPS).fill(1);
+    buildSeq();
+    alert(`✓ 16 chops loaded into ${id.toUpperCase()} steps!\nSwitch to BEAT tab and hit PLAY.`);
+  }
 
-        function setBpmValue(newBpm) {
-            bpm = Math.min(180, Math.max(60, newBpm));
-            document.getElementById('bpmValue').innerText = bpm;
-            document.getElementById('bpmSlider').value = bpm;
-            if (playing) {
-                clearInterval(intervalId);
-                intervalId = setInterval(() => {
-                    currentStepIndex = (currentStepIndex + 1) % STEPS;
-                    fireStep(currentStepIndex);
-                }, (60000 / bpm) / 4);
-            }
-        }
+  // ── YouTube ───────────────────────────────────────────────────
+  function loadYt() {
+    const url=document.getElementById("ytUrl").value;
+    const m=url.match(/(?:youtu\.be\/|v=|embed\/)([A-Za-z0-9_-]{11})/);
+    if(m){
+      document.getElementById("ytFrame").src=`https://www.youtube.com/embed/${m[1]}?rel=0`;
+      document.getElementById("ytFrame").style.display="block";
+      document.getElementById("ytPlaceholder").style.display="none";
+    } else alert("Invalid YouTube URL");
+  }
 
-        function setVolumeValue(val) {
-            volume = val;
-            document.getElementById('volumeValue').innerText = volume;
-        }
+  // ── Tabs ──────────────────────────────────────────────────────
+  function buildTabs() {
+    document.getElementById("tabBar").innerHTML=TABS.map(t=>
+      `<button class="sb-tab${t.id===currentTab?' active':''}" data-tab="${t.id}"
+        onclick="SB.switchTab('${t.id}')">${t.label}</button>`
+    ).join("");
+  }
 
-        function toggleStep(padId, step) {
-            pattern[padId][step] = pattern[padId][step] === 1 ? 0 : 1;
-            renderSequencer();
-        }
+  function switchTab(id) {
+    currentTab=id;
+    document.querySelectorAll(".sb-tab").forEach(b=>b.classList.remove("active"));
+    document.querySelector(`.sb-tab[data-tab="${id}"]`)?.classList.add("active");
+    document.querySelectorAll(".sb-tab-panel").forEach(p=>p.classList.remove("active"));
+    document.getElementById(`panel-${id}`)?.classList.add("active");
+  }
 
-        function clearPad(padId) {
-            pattern[padId] = Array(STEPS).fill(0);
-            renderSequencer();
-        }
+  // ── Init ──────────────────────────────────────────────────────
+  function init() {
+    buildTabs();
+    buildSeq();
+  }
 
-        function randomizePattern() {
-            for (let pad of PADS) {
-                pattern[pad.id] = Array(STEPS).fill(0).map(() => Math.random() > 0.75 ? 1 : 0);
-            }
-            pattern.kick[0] = 1; pattern.kick[8] = 1;
-            pattern.snare[4] = 1; pattern.snare[12] = 1;
-            renderSequencer();
-        }
+  init();
 
-        function resetPattern() {
-            pattern = JSON.parse(JSON.stringify(DEFAULT_PATTERN));
-            renderSequencer();
-        }
-
-        async function loadSample(padId, file) {
-            if (!file) return;
-            const ctx = getAudioCtx();
-            try {
-                const arrayBuffer = await file.arrayBuffer();
-                const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-                sampleBuffers[padId] = audioBuffer;
-                alert(`Sample loaded for ${padId.toUpperCase()}`);
-                renderSequencer(); // refresh to show "✓ LOADED"
-            } catch(e) { alert("Failed to load audio"); }
-        }
-
-        function renderSequencer() {
-            const container = document.getElementById('sequencerContainer');
-            if (!container) return;
-            let html = `<div class="sb-seq-grid" style="margin-bottom:6px;"><div></div>`;
-            for (let i=0; i<STEPS; i++) {
-                html += `<div class="sb-step-num" style="color:${i%4===0?'#FFD700':'#333'}">${i+1}</div>`;
-            }
-            html += `</div>`;
-            for (let pad of PADS) {
-                const hasSample = sampleBuffers[pad.id] !== null;
-                html += `<div class="sb-seq-grid" style="margin-bottom:6px;">
-                            <div class="sb-pad-label-container">
-                                <button class="sb-pad-label" data-id="${pad.id}" style="background:${pad.color}18; border-color:${pad.color}; color:${pad.color}" onclick="window.clearPad('${pad.id}')">${pad.label}</button>
-                                <button class="sb-load-sample-btn" style="background:${hasSample?pad.color+'44':'#1a1a1a'}" onclick="document.getElementById('fileInput_${pad.id}').click()">${hasSample?'✓ LOADED':'📁 LOAD SAMPLE'}</button>
-                                <input type="file" id="fileInput_${pad.id}" accept="audio/*" style="display:none" onchange="window.loadSampleFromEvent('${pad.id}', this.files[0])">
-                            </div>`;
-                for (let s=0; s<STEPS; s++) {
-                    const active = pattern[pad.id][s];
-                    html += `<button class="sb-step-btn ${active?'on':''}" style="background:${active?pad.color:'#111'}; height:30px;" onclick="window.toggleStep('${pad.id}', ${s})"></button>`;
-                }
-                html += `</div>`;
-            }
-            container.innerHTML = html;
-        }
-
-        // Expose functions globally
-        window.clearPad = clearPad;
-        window.toggleStep = toggleStep;
-        window.randomizePattern = randomizePattern;
-        window.resetPattern = resetPattern;
-        window.startStop = startStop;
-        window.setBpmValue = setBpmValue;
-        window.setVolumeValue = setVolumeValue;
-        window.loadSampleFromEvent = (padId, file) => loadSample(padId, file);
-        window.switchTab = (tab) => {
-            activeTab = tab;
-            document.querySelectorAll('.sb-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.sb-tab[data-tab="${tab}"]`).classList.add('active');
-            document.getElementById('tabBeat').style.display = tab === 'beat' ? 'block' : 'none';
-            document.getElementById('tabYoutube').style.display = tab === 'youtube' ? 'block' : 'none';
-            document.getElementById('tabUpload').style.display = tab === 'upload' ? 'block' : 'none';
-            document.getElementById('tabStems').style.display = tab === 'stems' ? 'block' : 'none';
-        };
-        window.loadYoutube = () => {
-            const url = document.getElementById('ytUrl').value;
-            const match = url.match(/(?:youtu\.be\/|v=|embed\/)([A-Za-z0-9_-]{11})/);
-            if (match) {
-                ytEmbedId = match[1];
-                document.getElementById('ytFrame').src = `https://www.youtube.com/embed/${ytEmbedId}?rel=0`;
-                document.getElementById('ytFrame').style.display = 'block';
-            } else {
-                alert('Invalid YouTube URL');
-            }
-        };
-        window.handleAudioUpload = async (file) => {
-            if (!file) return;
-            uploadedFileName = file.name;
-            bpmDetecting = true;
-            document.getElementById('uploadName').innerText = uploadedFileName;
-            document.getElementById('detectedBox').style.display = 'none';
-            document.getElementById('detectingMsg').style.display = 'block';
-            try {
-                const arrayBuffer = await file.arrayBuffer();
-                const ctx = new AudioContext();
-                const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-                // simple BPM detection (placeholder)
-                const detected = DEFAULT_BPM; // in real would compute
-                detectedBpm = detected;
-                setBpmValue(detected);
-                document.getElementById('detectedBpmValue').innerText = detected;
-                document.getElementById('detectedBox').style.display = 'block';
-                ctx.close();
-            } catch(e) {}
-            bpmDetecting = false;
-            document.getElementById('detectingMsg').style.display = 'none';
-        };
-
-        // Build UI
-        function buildUI() {
-            const app = document.getElementById('root');
-            app.innerHTML = `
-            <div class="sb-root">
-                <div class="sb-header">
-                    <div class="sb-logo-row">
-                        <div class="sb-logo-box">🎤</div>
-                        <div><div class="sb-title">SAINT BEV</div><div class="sb-subtitle">Sample Beat Maker — Load Your Stems</div></div>
-                    </div>
-                    <div class="sb-tabs">
-                        <button class="sb-tab active" data-tab="beat" onclick="window.switchTab('beat')">▶ BEAT</button>
-                        <button class="sb-tab" data-tab="youtube" onclick="window.switchTab('youtube')">YT SAMPLE</button>
-                        <button class="sb-tab" data-tab="upload" onclick="window.switchTab('upload')">MY TRACK</button>
-                        <button class="sb-tab" data-tab="stems" onclick="window.switchTab('stems')">SPLIT STEMS</button>
-                    </div>
-                </div>
-                <div class="sb-body">
-                    <div id="tabBeat">
-                        <div class="sb-transport">
-                            <button id="playBtn" class="sb-play-btn" onclick="window.startStop()">▶</button>
-                            <div style="flex:1">
-                                <div class="sb-bpm-label">TEMPO</div>
-                                <div class="sb-bpm-value"><span id="bpmValue">${bpm}</span> BPM</div>
-                                <input id="bpmSlider" type="range" min="60" max="180" value="${bpm}" oninput="window.setBpmValue(parseInt(this.value))">
-                            </div>
-                            <button class="sb-tap-btn" onclick="window.tapBpm?.()">TAP</button>
-                        </div>
-                        <div class="sb-vol-row">
-                            <span class="sb-vol-label">VOL</span>
-                            <input type="range" min="0" max="100" value="${volume}" oninput="window.setVolumeValue(parseInt(this.value))" style="flex:1">
-                            <span id="volumeValue" class="sb-vol-val">${volume}</span>
-                        </div>
-                        <div id="sequencerContainer"></div>
-                        <div class="sb-actions">
-                            <button class="sb-action-btn" onclick="window.randomizePattern()">🎲 RANDOMIZE</button>
-                            <button class="sb-action-btn" onclick="window.resetPattern()">↺ RESET</button>
-                        </div>
-                        <div id="runningMsg" class="sb-running" style="display:none">● REC — SPIT YOUR BARS NOW</div>
-                    </div>
-                    <div id="tabYoutube" style="display:none">
-                        <div class="sb-yt-hint" style="border-color:#FF8C00">Paste a YouTube beat or song. Run it alongside your sequencer.</div>
-                        <div style="display:flex; gap:8px; margin-bottom:16px">
-                            <input id="ytUrl" class="sb-input" placeholder="https://youtube.com/watch?v=...">
-                            <button class="sb-load-btn" onclick="window.loadYoutube()">LOAD</button>
-                        </div>
-                        <iframe id="ytFrame" width="100%" height="220" style="display:none; border:1px solid #222" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div id="tabUpload" style="display:none">
-                        <div class="sb-yt-hint" style="border-color:#CC00FF">Drop your track here. We'll detect BPM and lock the beat to your flow.</div>
-                        <label class="sb-upload-label">
-                            <input type="file" accept="audio/*" onchange="window.handleAudioUpload(this.files[0])" style="display:none">
-                            <div style="font-size:36px">🎵</div>
-                            <div id="uploadName" style="color:#CC00FF">TAP TO UPLOAD YOUR TRACK</div>
-                        </label>
-                        <div id="detectingMsg" style="display:none; margin-top:16px; background:#0d0d0d; padding:16px; text-align:center; color:#CC00FF">⏳ READING YOUR FLOW...</div>
-                        <div id="detectedBox" style="display:none; margin-top:16px; background:#0d0d0d; border-left:3px solid #CC00FF; padding:16px">
-                            <div>DETECTED TEMPO</div>
-                            <div style="font-size:48px; color:#CC00FF"><span id="detectedBpmValue">${detectedBpm || '?'}</span> BPM</div>
-                            <div style="color:#00FF87">✓ BEAT LOCKED TO YOUR TEMPO</div>
-                        </div>
-                    </div>
-                    <div id="tabStems" style="display:none">
-                        <div class="sb-yt-hint" style="border-color:#00FF87">Use free tools to split any song into stems:</div>
-                        <div class="sb-stem-box">
-                            <div class="sb-stem-title">FREE STEM SPLITTERS</div>
-                            <a class="sb-stem-link" href="https://lalal.ai" target="_blank">🔬 LALAL.AI (free preview, pay to download)</a>
-                            <a class="sb-stem-link" href="https://vocalremover.org" target="_blank">🎤 VOCALREMOVER.ORG — Completely free download</a>
-                            <a class="sb-stem-link" href="https://moises.ai" target="_blank">🎛 MOISES.AI — 5 free downloads/month</a>
-                            <div style="margin-top:14px; color:#555; font-size:10px">👉 Use vocalremover.org – no account, no payment. Download vocal + instrumental, then load them into the pads above.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-            renderSequencer();
-        }
-        buildUI();
-        // tap BPM
-        let tapTimes = [];
-        window.tapBpm = () => {
-            const now = Date.now();
-            tapTimes.push(now);
-            tapTimes = tapTimes.filter(t => now - t < 3000).slice(-8);
-            if (tapTimes.length >= 2) {
-                const diffs = tapTimes.slice(1).map((t,i) => t - tapTimes[i]);
-                const avg = diffs.reduce((a,b)=>a+b,0)/diffs.length;
-                const newBpm = Math.round(60000/avg);
-                if (newBpm >=60 && newBpm <=180) setBpmValue(newBpm);
-            }
-        };
-        // update running msg
-        setInterval(() => {
-            const msgDiv = document.getElementById('runningMsg');
-            if (msgDiv) msgDiv.style.display = playing ? 'block' : 'none';
-        }, 100);
-    })();
+  return { startStop,setBpm,setVol,tap,toggle,clearPad,randomize,reset,
+           loadSample,detectBpm,loadChop,previewChop,assignChops,loadYt,switchTab };
+})();
 </script>
 </body>
 </html>
